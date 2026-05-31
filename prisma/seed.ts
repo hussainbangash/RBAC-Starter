@@ -3,8 +3,23 @@ import bcrypt from "bcryptjs";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required to seed the database.");
+}
+
+if (
+  process.env.NODE_ENV === "production" &&
+  process.env.ALLOW_PRODUCTION_SEED !== "true"
+) {
+  throw new Error(
+    "Refusing to seed demo data in production. Set ALLOW_PRODUCTION_SEED=true to override."
+  );
+}
+
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString: databaseUrl,
 });
 
 const prisma = new PrismaClient({ adapter });

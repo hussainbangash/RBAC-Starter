@@ -2,17 +2,19 @@
 
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { appRoles } from "@/lib/permissions/access";
 import { requireRole } from "@/lib/permissions/roles";
+import { passwordSchema } from "@/lib/security/password";
 
 const roleSchema = z.enum(appRoles);
 
 const createUserSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(80),
   email: z.string().trim().toLowerCase().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: passwordSchema,
   role: roleSchema,
 });
 
@@ -25,14 +27,16 @@ const deleteUserSchema = z.object({
   userId: z.string().min(1),
 });
 
+function redirectWithMessage(type: "error" | "success", code: string): never {
+  redirect(`/dashboard/users?${type}=${code}`);
+}
+
 export async function createUser(formData: FormData) {
   const admin = await requireRole(["ADMIN"]);
   const parsed = createUserSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
-    throw new Error(
-      parsed.error.issues[0]?.message ?? "Invalid user form submission."
-    );
+    redirectWithMessage("error", "invalid-user");
   }
 
   const { name, email, password, role } = parsed.data;
@@ -46,7 +50,7 @@ export async function createUser(formData: FormData) {
   });
 
   if (existingUser) {
-    throw new Error("A user with that email already exists.");
+    redirectWithMessage("error", "duplicate-email");
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -70,6 +74,7 @@ export async function createUser(formData: FormData) {
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/users");
+  redirectWithMessage("success", "user-created");
 }
 
 export async function updateUserRole(formData: FormData) {
@@ -77,13 +82,13 @@ export async function updateUserRole(formData: FormData) {
   const parsed = updateRoleSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
-    throw new Error("Invalid role update submission.");
+    redirectWithMessage("error", "invalid-role");
   }
 
   const { userId, role } = parsed.data;
 
   if (userId === admin.id && role !== "ADMIN") {
-    throw new Error("Admins cannot remove their own admin role.");
+    redirectWithMessage("error", "self-role");
   }
 
   const targetUser = await prisma.user.update({
@@ -108,6 +113,7 @@ export async function updateUserRole(formData: FormData) {
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/users");
+  redirectWithMessage("success", "role-updated");
 }
 
 export async function deleteUser(formData: FormData) {
@@ -115,13 +121,13 @@ export async function deleteUser(formData: FormData) {
   const parsed = deleteUserSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
-    throw new Error("Invalid delete user submission.");
+    redirectWithMessage("error", "invalid-user");
   }
 
   const { userId } = parsed.data;
 
   if (userId === admin.id) {
-    throw new Error("Admins cannot delete their own account.");
+    redirectWithMessage("error", "self-delete");
   }
 
   const targetUser = await prisma.user.findUnique({
@@ -134,7 +140,7 @@ export async function deleteUser(formData: FormData) {
   });
 
   if (!targetUser) {
-    return;
+    redirectWithMessage("error", "missing-user");
   }
 
   await prisma.user.delete({
@@ -153,4 +159,5 @@ export async function deleteUser(formData: FormData) {
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/users");
+  redirectWithMessage("success", "user-deleted");
 }

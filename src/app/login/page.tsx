@@ -5,7 +5,12 @@ import { demoAccounts, getDemoAccount } from "@/lib/auth/demo-accounts";
 type LoginSearchParams = Promise<{
   demo?: string | string[];
   error?: string | string[];
+  retryAfter?: string | string[];
 }>;
+
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
 
 export default async function LoginPage({
   searchParams,
@@ -13,8 +18,16 @@ export default async function LoginPage({
   searchParams: LoginSearchParams;
 }) {
   const params = await searchParams;
-  const selectedAccount = getDemoAccount(params.demo);
-  const hasAuthError = Boolean(params.error);
+  const showDemoAccounts = process.env.NODE_ENV !== "production";
+  const selectedAccount = showDemoAccounts ? getDemoAccount(params.demo) : null;
+  const error = getParam(params.error);
+  const retryAfter = getParam(params.retryAfter);
+  const errorMessage =
+    error === "RateLimited"
+      ? `Too many sign-in attempts. Try again in ${retryAfter ?? "60"} seconds.`
+      : error
+        ? "Invalid email or password."
+        : "";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
@@ -33,7 +46,7 @@ export default async function LoginPage({
         </div>
 
         <form
-          key={selectedAccount.id}
+          key={selectedAccount?.id ?? "manual"}
           action={signInWithCredentials}
           className="space-y-5"
         >
@@ -48,7 +61,7 @@ export default async function LoginPage({
               id="email"
               name="email"
               type="email"
-              defaultValue={selectedAccount.email}
+              defaultValue={selectedAccount?.email ?? ""}
               autoComplete="email"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
@@ -66,16 +79,16 @@ export default async function LoginPage({
               id="password"
               name="password"
               type="password"
-              defaultValue={selectedAccount.password}
+              defaultValue={selectedAccount?.password ?? ""}
               autoComplete="current-password"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
 
-          {hasAuthError ? (
+          {errorMessage ? (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              Invalid email or password.
+              {errorMessage}
             </p>
           ) : null}
 
@@ -87,26 +100,28 @@ export default async function LoginPage({
           </button>
         </form>
 
-        <div className="mt-8 border-t border-slate-200 pt-6">
-          <p className="mb-3 text-sm font-medium text-slate-700">
-            Demo accounts
-          </p>
+        {showDemoAccounts ? (
+          <div className="mt-8 border-t border-slate-200 pt-6">
+            <p className="mb-3 text-sm font-medium text-slate-700">
+              Demo accounts
+            </p>
 
-          <div className="grid gap-2">
-            {demoAccounts.map((account) => (
-              <Link
-                key={account.email}
-                href={`/login?demo=${account.id}`}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-900 transition hover:bg-slate-50"
-              >
-                <span className="font-medium text-slate-900">
-                  {account.label}
-                </span>
-                <span className="block text-slate-500">{account.email}</span>
-              </Link>
-            ))}
+            <div className="grid gap-2">
+              {demoAccounts.map((account) => (
+                <Link
+                  key={account.email}
+                  href={`/login?demo=${account.id}`}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-900 transition hover:bg-slate-50"
+                >
+                  <span className="font-medium text-slate-900">
+                    {account.label}
+                  </span>
+                  <span className="block text-slate-500">{account.email}</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
       </section>
     </main>
   );

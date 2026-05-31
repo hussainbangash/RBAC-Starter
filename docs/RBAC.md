@@ -69,3 +69,13 @@ src/app/dashboard/users/actions.ts
 
 The actions intentionally prevent an admin from deleting their own account or
 removing their own admin role.
+
+Admin-created passwords use the shared policy in:
+
+```text
+src/lib/security/password.ts
+```
+
+The default policy requires at least 12 characters with uppercase, lowercase,
+and a number. Replace this with an invite flow before production if your product
+should not let admins set initial passwords directly.

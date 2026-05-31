@@ -3,8 +3,40 @@ import { appRoles } from "@/lib/permissions/access";
 import { requireRole, roleLabels } from "@/lib/permissions/roles";
 import { createUser, deleteUser, updateUserRole } from "./actions";
 
-export default async function UsersPage() {
+type UsersSearchParams = Promise<{
+  error?: string | string[];
+  success?: string | string[];
+}>;
+
+const errorMessages: Record<string, string> = {
+  "duplicate-email": "A user with that email already exists.",
+  "invalid-role": "That role update was invalid.",
+  "invalid-user":
+    "Check the submitted user details. Passwords must be at least 12 characters and include uppercase, lowercase, and a number.",
+  "missing-user": "That user no longer exists.",
+  "self-delete": "You cannot delete your own account.",
+  "self-role": "You cannot remove your own admin role.",
+};
+
+const successMessages: Record<string, string> = {
+  "role-updated": "Role updated.",
+  "user-created": "User created.",
+  "user-deleted": "User deleted.",
+};
+
+function getParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: UsersSearchParams;
+}) {
   const currentUser = await requireRole(["ADMIN"]);
+  const params = await searchParams;
+  const errorMessage = errorMessages[getParam(params.error) ?? ""];
+  const successMessage = successMessages[getParam(params.success) ?? ""];
 
   const users = await prisma.user.findMany({
     orderBy: {
@@ -33,6 +65,18 @@ export default async function UsersPage() {
           protected route.
         </p>
       </section>
+
+      {errorMessage ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {successMessage ? (
+        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900">
+          {successMessage}
+        </p>
+      ) : null}
 
       <section className="rounded-2xl bg-white p-6 shadow-sm">
         <div>
@@ -89,7 +133,7 @@ export default async function UsersPage() {
               id="password"
               name="password"
               type="password"
-              minLength={8}
+              minLength={12}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />

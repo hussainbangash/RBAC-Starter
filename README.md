@@ -22,6 +22,9 @@ routing, seeded users, and protected admin actions are already wired.
 - Admin, Manager, and User roles.
 - Server-side route guards for protected pages.
 - Admin-only user management.
+- Login throttling for repeated credential attempts.
+- Production env validation.
+- Strong password policy for admin-created users.
 - Admin/Manager reports page.
 - Profile page for authenticated users.
 - Prisma schema, migration, and seed data.
@@ -113,6 +116,17 @@ create users, and then build feature pages behind `requireUser()` or
 
 ## Production Notes
 
-This is a starter, not a complete production security program. Before production
-use, add login rate limiting, stronger password policy, password reset, invite
-flows, and any OAuth/SAML providers your product needs.
+This template includes production-oriented defaults: required env validation,
+server-side route guards, login throttling, demo account UI hidden in production,
+and a baseline password policy for admin-created users.
+
+Before a real production launch, choose the pieces that depend on your product
+and hosting environment:
+
+- Replace the in-memory login throttle with Redis, Upstash, or another shared
+  store if you deploy more than one server instance.
+- Add password reset or invite-based onboarding.
+- Decide whether credentials auth is enough or whether to add OAuth/SAML.
+- Add email delivery for invites, resets, and account notifications.
+- Add audit log search/export if your admins need traceability.
+- Add E2E tests for login, logout, and role-restricted navigation.

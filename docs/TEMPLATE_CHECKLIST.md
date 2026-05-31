@@ -17,8 +17,13 @@ Use this checklist when turning a copied repository into a real SaaS app.
 ## Before Production
 
 - Replace demo users and passwords.
+- Confirm `NODE_ENV=production` hides demo login account shortcuts.
+- Do not run the demo seed against production unless you intentionally set
+  `ALLOW_PRODUCTION_SEED=true`.
 - Decide whether credentials auth is enough or whether to add OAuth/SAML.
-- Add rate limiting to login and sensitive server actions.
+- Replace the built-in in-memory login throttle with a shared store if running
+  multiple server instances.
+- Add password reset or invite-based onboarding.
 - Add audit log views if your admins need traceability.
 - Add tests for any new roles or protected routes.
 - Rotate `AUTH_SECRET` and database credentials outside source control.
