@@ -10,11 +10,17 @@ routing, seeded users, and protected admin actions are already wired.
 
 ## Screenshots
 
-Screenshots live in `public/screenshots/`.
+| Login | Dashboard |
+| --- | --- |
+| ![Login page](public/screenshots/login.png) | ![Dashboard page](public/screenshots/dashboard.png) |
 
-> Capture pending: run the app locally and capture `login`, `dashboard`,
-> `admin-users`, `manager-reports`, `unauthorized`, and `profile` before merging
-> this branch into `main`.
+| Admin Users | Manager Reports |
+| --- | --- |
+| ![Admin users page](public/screenshots/admin-users.png) | ![Manager reports page](public/screenshots/manager-reports.png) |
+
+| Unauthorized | Profile |
+| --- | --- |
+| ![Unauthorized page](public/screenshots/unauthorized.png) | ![Profile page](public/screenshots/profile.png) |
 
 ## Live Demo
 
