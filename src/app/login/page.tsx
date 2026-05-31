@@ -32,7 +32,11 @@ export default async function LoginPage({
           </p>
         </div>
 
-        <form action={signInWithCredentials} className="space-y-5">
+        <form
+          key={selectedAccount.id}
+          action={signInWithCredentials}
+          className="space-y-5"
+        >
           <div>
             <label
               htmlFor="email"
