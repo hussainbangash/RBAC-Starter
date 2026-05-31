@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaaS RBAC Starter
 
-## Getting Started
+A reusable Next.js SaaS template with credentials authentication, PostgreSQL,
+Prisma, and server-side role-based access control.
 
-First, run the development server:
+Use it as a GitHub template when you want a project where auth, dashboard
+routing, seeded users, and protected admin actions are already wired.
+
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- NextAuth v5 credentials provider
+- Prisma 7 with PostgreSQL
+- Tailwind CSS 4
+- Zod validation
+
+## What Is Included
+
+- Login page with seeded demo accounts.
+- JWT sessions with role data attached to the session.
+- Admin, Manager, and User roles.
+- Server-side route guards for protected pages.
+- Admin-only user management.
+- Admin/Manager reports page.
+- Profile page for authenticated users.
+- Prisma schema, migration, and seed data.
+- RBAC documentation and template setup checklist.
+
+## Quick Start
 
 ```bash
+npm install
+copy .env.example .env
+npx prisma generate
+npx prisma migrate dev
+npm run seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Demo accounts after seeding:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@demo.com` | `password123` |
+| Manager | `manager@demo.com` | `password123` |
+| User | `user@demo.com` | `password123` |
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+Required variables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+AUTH_SECRET="replace-with-a-long-random-secret"
+AUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Generate a local auth secret with:
 
-## Deploy on Vercel
+```bash
+npx auth secret
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Common Commands
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev          # Start the local app
+npm run build        # Production build
+npm run lint         # ESLint
+npm test             # RBAC unit tests
+npm run db:generate  # Generate Prisma client
+npm run db:migrate   # Run local migrations
+npm run db:deploy    # Apply migrations in deploy environments
+npm run seed         # Seed demo users and data
+```
+
+## RBAC Model
+
+The core access map lives in `src/lib/permissions/access.ts`.
+
+Authentication-aware guards live in `src/lib/permissions/roles.ts`:
+
+- `requireUser()` redirects anonymous users to `/login`.
+- `requireRole([...])` redirects authenticated users without the required role
+  to `/unauthorized`.
+
+Route access:
+
+| Route | Roles |
+| --- | --- |
+| `/dashboard` | Admin, Manager, User |
+| `/dashboard/users` | Admin |
+| `/dashboard/reports` | Admin, Manager |
+| `/dashboard/profile` | Admin, Manager, User |
+
+See `docs/RBAC.md` for customization steps.
+
+## Making This A GitHub Template
+
+Push the repository to GitHub, then enable:
+
+```text
+Settings -> General -> Template repository
+```
+
+People copying the repo should create their own `.env`, run migrations, seed or
+create users, and then build feature pages behind `requireUser()` or
+`requireRole()`.
+
+## Production Notes
+
+This is a starter, not a complete production security program. Before production
+use, add login rate limiting, stronger password policy, password reset, invite
+flows, and any OAuth/SAML providers your product needs.

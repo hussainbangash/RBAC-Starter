@@ -49,7 +49,7 @@ export default async function ReportsPage() {
             </div>
 
             <div className="mt-5 border-t border-slate-100 pt-4 text-sm text-slate-500">
-              Created by {report.createdBy.name ?? "Unknown"} ·{" "}
+              Created by {report.createdBy.name ?? "Unknown"} on{" "}
               {report.createdAt.toLocaleDateString("en-US")}
             </div>
           </article>

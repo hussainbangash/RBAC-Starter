@@ -2,8 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-
-type AppRole = "ADMIN" | "MANAGER" | "USER";
+import type { AppRole } from "@/lib/permissions/access";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
