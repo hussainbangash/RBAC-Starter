@@ -44,9 +44,9 @@ export default async function LoginPage({
               id="email"
               name="email"
               type="email"
-              placeholder={selectedAccount.email}
+              defaultValue={selectedAccount.email}
               autoComplete="email"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-950 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:placeholder:text-transparent"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
@@ -62,9 +62,9 @@ export default async function LoginPage({
               id="password"
               name="password"
               type="password"
-              placeholder={selectedAccount.password}
+              defaultValue={selectedAccount.password}
               autoComplete="current-password"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-950 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:placeholder:text-transparent"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
