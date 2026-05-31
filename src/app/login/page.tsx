@@ -1,73 +1,38 @@
-"use client";
+import Link from "next/link";
+import { signInWithCredentials } from "./actions";
+import { demoAccounts, getDemoAccount } from "@/lib/auth/demo-accounts";
 
-import { FormEvent, useState, useTransition } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+type LoginSearchParams = Promise<{
+  demo?: string | string[];
+  error?: string | string[];
+}>;
 
-const demoAccounts = [
-  {
-    label: "Admin Demo",
-    email: "admin@demo.com",
-    password: "password123",
-  },
-  {
-    label: "Manager Demo",
-    email: "manager@demo.com",
-    password: "password123",
-  },
-  {
-    label: "User Demo",
-    email: "user@demo.com",
-    password: "password123",
-  },
-];
-
-export default function LoginPage() {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("admin@demo.com");
-  const [password, setPassword] = useState("password123");
-  const [error, setError] = useState("");
-  const [isPending, startTransition] = useTransition();
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-
-    startTransition(async () => {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl: "/dashboard",
-      });
-
-      if (result?.error) {
-        setError("Invalid email or password.");
-        return;
-      }
-
-      router.push("/dashboard");
-      router.refresh();
-    });
-  }
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: LoginSearchParams;
+}) {
+  const params = await searchParams;
+  const selectedAccount = getDemoAccount(params.demo);
+  const hasAuthError = Boolean(params.error);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <div className="mb-8">
           <p className="text-sm font-medium text-slate-500">
-            SaaS Admin Dashboard
+            SaaS RBAC Starter
           </p>
           <h1 className="mt-2 text-3xl font-bold text-slate-900">
             Sign in to your account
           </h1>
           <p className="mt-2 text-sm text-slate-600">
-            Use one of the seeded demo accounts below.
+            Use a seeded demo account or enter credentials for a user created by
+            an admin.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form action={signInWithCredentials} className="space-y-5">
           <div>
             <label
               htmlFor="email"
@@ -77,10 +42,10 @@ export default function LoginPage() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
-              value={email}
+              defaultValue={selectedAccount.email}
               autoComplete="email"
-              onChange={(event) => setEmail(event.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
               required
             />
@@ -95,27 +60,26 @@ export default function LoginPage() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
-              value={password}
+              defaultValue={selectedAccount.password}
               autoComplete="current-password"
-              onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
               required
             />
           </div>
 
-          {error ? (
+          {hasAuthError ? (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
+              Invalid email or password.
             </p>
           ) : null}
 
           <button
             type="submit"
-            disabled={isPending}
-            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
-            {isPending ? "Signing in..." : "Sign in"}
+            Sign in
           </button>
         </form>
 
@@ -126,21 +90,16 @@ export default function LoginPage() {
 
           <div className="grid gap-2">
             {demoAccounts.map((account) => (
-              <button
+              <Link
                 key={account.email}
-                type="button"
-                onClick={() => {
-                  setEmail(account.email);
-                  setPassword(account.password);
-                  setError("");
-                }}
+                href={`/login?demo=${account.id}`}
                 className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm transition hover:bg-slate-50"
               >
                 <span className="font-medium text-slate-900">
                   {account.label}
                 </span>
                 <span className="block text-slate-500">{account.email}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
