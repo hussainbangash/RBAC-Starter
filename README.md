@@ -1,10 +1,30 @@
-# SaaS RBAC Starter
+# SaaS RBAC Admin Starter
+
+[![CI](https://github.com/hussainbangash/SaaS-RBAC-Admin-Starter/actions/workflows/ci.yml/badge.svg)](https://github.com/hussainbangash/SaaS-RBAC-Admin-Starter/actions/workflows/ci.yml)
 
 A reusable Next.js SaaS template with credentials authentication, PostgreSQL,
 Prisma, and server-side role-based access control.
 
 Use it as a GitHub template when you want a project where auth, dashboard
 routing, seeded users, and protected admin actions are already wired.
+
+## Screenshots
+
+Screenshots live in `public/screenshots/`.
+
+> Capture pending: run the app locally and capture `login`, `dashboard`,
+> `admin-users`, `manager-reports`, `unauthorized`, and `profile` before merging
+> this branch into `main`.
+
+## Live Demo
+
+Deployment pending. The intended demo credentials are:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@demo.com` | `password123` |
+| Manager | `manager@demo.com` | `password123` |
+| User | `user@demo.com` | `password123` |
 
 ## Stack
 
@@ -80,6 +100,19 @@ npm run db:migrate   # Run local migrations
 npm run db:deploy    # Apply migrations in deploy environments
 npm run seed         # Seed demo users and data
 ```
+
+## RBAC Matrix
+
+| Feature | Admin | Manager | User |
+| --- | --- | --- | --- |
+| View dashboard | Yes | Yes | Yes |
+| Manage users | Yes | No | No |
+| View reports | Yes | Yes | No |
+| Edit own profile | Yes | Yes | Yes |
+| Change roles | Yes | No | No |
+
+The same matrix is rendered inside the dashboard so reviewers can inspect the
+role model visually.
 
 ## RBAC Model
 

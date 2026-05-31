@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { appRoles } from "@/lib/permissions/access";
+import { canAdminChangeRole, canAdminDeleteUser } from "@/lib/permissions/matrix";
 import { requireRole } from "@/lib/permissions/roles";
 import { passwordSchema } from "@/lib/security/password";
 
@@ -87,7 +88,7 @@ export async function updateUserRole(formData: FormData) {
 
   const { userId, role } = parsed.data;
 
-  if (userId === admin.id && role !== "ADMIN") {
+  if (!canAdminChangeRole(admin.id, userId, role)) {
     redirectWithMessage("error", "self-role");
   }
 
@@ -126,7 +127,7 @@ export async function deleteUser(formData: FormData) {
 
   const { userId } = parsed.data;
 
-  if (userId === admin.id) {
+  if (!canAdminDeleteUser(admin.id, userId)) {
     redirectWithMessage("error", "self-delete");
   }
 

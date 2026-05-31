@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { appRoles, canAccess } from "@/lib/permissions/access";
+import { rbacFeatures } from "@/lib/permissions/matrix";
 import { requireUser, roleLabels } from "@/lib/permissions/roles";
 import Link from "next/link";
 
@@ -60,6 +62,59 @@ export default async function DashboardPage() {
           <p className="mt-3 text-3xl font-bold text-slate-900">
             {activityCount}
           </p>
+        </div>
+      </section>
+
+      <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-900">
+            RBAC Matrix
+          </h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Role permissions are centralized and enforced server-side.
+          </p>
+        </div>
+
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[520px] border-collapse text-left text-sm">
+            <thead className="border-b border-slate-200 text-slate-700">
+              <tr>
+                <th className="py-3 pr-4 font-semibold">Feature</th>
+                {appRoles.map((role) => (
+                  <th key={role} className="px-4 py-3 text-center font-semibold">
+                    {roleLabels[role]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {rbacFeatures.map((item) => (
+                <tr key={item.feature}>
+                  <td className="py-3 pr-4 font-medium text-slate-900">
+                    {item.feature}
+                  </td>
+                  {appRoles.map((role) => {
+                    const allowed = canAccess(role, item.allowedRoles);
+
+                    return (
+                      <td key={role} className="px-4 py-3 text-center">
+                        <span
+                          className={
+                            allowed
+                              ? "font-semibold text-emerald-700"
+                              : "font-semibold text-slate-400"
+                          }
+                        >
+                          {allowed ? "Yes" : "No"}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
