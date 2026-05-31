@@ -93,7 +93,7 @@ export default async function LoginPage({
               <Link
                 key={account.email}
                 href={`/login?demo=${account.id}`}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm transition hover:bg-slate-50"
+                className="rounded-lg border border-slate-200 px-3 py-2 text-left text-sm text-slate-900 transition hover:bg-slate-50"
               >
                 <span className="font-medium text-slate-900">
                   {account.label}

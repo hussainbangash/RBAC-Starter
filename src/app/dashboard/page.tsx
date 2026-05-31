@@ -105,7 +105,7 @@ export default async function DashboardPage() {
           <div className="mt-5 space-y-3 text-sm">
             <Link
               href="/dashboard/profile"
-              className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50"
+              className="block rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-900 hover:bg-slate-50"
             >
               View profile
             </Link>
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
             {(user.role === "ADMIN" || user.role === "MANAGER") && (
               <Link
                 href="/dashboard/reports"
-                className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50"
+                className="block rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-900 hover:bg-slate-50"
               >
                 View reports
               </Link>
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
             {user.role === "ADMIN" && (
               <Link
                 href="/dashboard/users"
-                className="block rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50"
+                className="block rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-900 hover:bg-slate-50"
               >
                 Manage users
               </Link>
