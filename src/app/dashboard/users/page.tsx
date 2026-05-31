@@ -57,7 +57,7 @@ export default async function UsersPage() {
               id="name"
               name="name"
               type="text"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
@@ -73,7 +73,7 @@ export default async function UsersPage() {
               id="email"
               name="email"
               type="email"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
@@ -90,7 +90,7 @@ export default async function UsersPage() {
               name="password"
               type="password"
               minLength={8}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-slate-900"
               required
             />
           </div>
