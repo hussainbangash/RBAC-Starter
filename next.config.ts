@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
-// Baseline security headers applied to every response. A Content-Security-Policy
-// is intentionally left commented out because it needs to be tuned to the pages
-// and third-party origins each product actually uses.
+// Baseline security headers applied to every response. The Content-Security-Policy
+// is set per-request (with a nonce) in `src/middleware.ts` instead of here.
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",
@@ -15,8 +14,6 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
-  // Example CSP to adapt and enable in production:
-  // { key: "Content-Security-Policy", value: "default-src 'self'; ..." },
 ];
 
 const nextConfig: NextConfig = {
