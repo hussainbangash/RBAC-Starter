@@ -41,12 +41,36 @@ routing, seeded users, and protected admin actions are already wired.
 
 ## Demo videos
 
-Short clips recorded against a live PostgreSQL database (click to play):
+Recorded against a live PostgreSQL database.
 
-- [Login → dashboard](docs/demos/01-login-dashboard.mp4)
-- [RBAC gating](docs/demos/02-rbac-gating.mp4) — a Manager is blocked from the admin-only Users page but allowed on Reports.
-- [**Live role revocation**](docs/demos/03-live-role-revocation.mp4) — a signed-in Manager is demoted to USER *directly in the database*, and loses access on the very next request without re-logging in.
-- [Admin user management](docs/demos/04-user-management.mp4) — creating a new user with the enforced password policy.
+### Live role revocation (the headline)
+
+A signed-in Manager is demoted to USER *directly in the database* and loses access on the
+very next request — no re-login required.
+
+![Live role revocation](docs/demos/03-live-role-revocation.gif)
+
+### Login → dashboard
+
+![Login to dashboard](docs/demos/01-login-dashboard.gif)
+
+### RBAC gating
+
+A Manager is blocked from the admin-only Users page but allowed on Reports.
+
+![RBAC gating](docs/demos/02-rbac-gating.gif)
+
+### Admin user management
+
+Creating a new user with the enforced password policy.
+
+![Admin user management](docs/demos/04-user-management.gif)
+
+Full-resolution MP4s:
+[login](docs/demos/01-login-dashboard.mp4) ·
+[gating](docs/demos/02-rbac-gating.mp4) ·
+[revocation](docs/demos/03-live-role-revocation.mp4) ·
+[user management](docs/demos/04-user-management.mp4)
 
 ## Quick Start
 
