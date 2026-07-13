@@ -39,6 +39,15 @@ routing, seeded users, and protected admin actions are already wired.
 | --- | --- | --- |
 | ![Reports](public/screenshots/manager-reports.png) | ![Profile](public/screenshots/profile.png) | ![Unauthorized](public/screenshots/unauthorized.png) |
 
+## Demo videos
+
+Short clips recorded against a live PostgreSQL database (click to play):
+
+- [Login → dashboard](docs/demos/01-login-dashboard.mp4)
+- [RBAC gating](docs/demos/02-rbac-gating.mp4) — a Manager is blocked from the admin-only Users page but allowed on Reports.
+- [**Live role revocation**](docs/demos/03-live-role-revocation.mp4) — a signed-in Manager is demoted to USER *directly in the database*, and loses access on the very next request without re-logging in.
+- [Admin user management](docs/demos/04-user-management.mp4) — creating a new user with the enforced password policy.
+
 ## Quick Start
 
 ```bash
