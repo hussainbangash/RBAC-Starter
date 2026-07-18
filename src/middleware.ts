@@ -13,7 +13,9 @@ import { NextResponse, type NextRequest } from "next/server";
  * hosts, or a CSS-in-JS library.
  */
 export function middleware(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  // Use Web APIs only: middleware runs in the Edge runtime, where Node's
+  // `Buffer` is not available (e.g. on Vercel). `btoa` + Web Crypto are.
+  const nonce = btoa(crypto.randomUUID());
 
   const csp = [
     `default-src 'self'`,
