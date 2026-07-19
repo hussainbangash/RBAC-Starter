@@ -28,11 +28,17 @@ export async function requireUser(): Promise<CurrentUser> {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { id: true, name: true, email: true, role: true },
+    select: { id: true, name: true, email: true, role: true, passwordChangedAt: true },
   });
 
   // User was deleted (or disabled) after the token was issued.
   if (!dbUser) {
+    redirect("/login");
+  }
+
+  // Password was reset after this session's token was issued -> force re-login.
+  const dbChanged = dbUser.passwordChangedAt ? dbUser.passwordChangedAt.getTime() : null;
+  if (dbChanged !== (session.user.pwdChangedAt ?? null)) {
     redirect("/login");
   }
 

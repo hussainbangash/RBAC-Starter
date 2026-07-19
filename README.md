@@ -176,13 +176,19 @@ Built into the template:
 - **User-enumeration mitigation** — sign-in runs a constant-time bcrypt compare
   whether or not the email exists.
 - **bcrypt cost 12** for password hashing.
-- **Security headers** — HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
-  `Referrer-Policy`, `Permissions-Policy` (see `next.config.ts`; add a tuned CSP).
+- **Password reset** — token flow (`/forgot-password` → `/reset-password`) with
+  **hashed, single-use, 30-minute** tokens, anti-enumeration, rate limiting, and
+  **session invalidation** (a reset logs out existing sessions via a
+  `passwordChangedAt` check). Sends via **Resend** if `RESEND_API_KEY` is set,
+  otherwise logs the link to the server console.
+- **Security headers + CSP** — HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
+  `Referrer-Policy`, `Permissions-Policy` in `next.config.ts`, plus a per-request
+  **nonce Content-Security-Policy** in `src/middleware.ts`.
 - **Seed guard** — `prisma/seed.ts` refuses to run against `NODE_ENV=production`
   unless `ALLOW_PROD_SEED=1`, since it wipes tables and creates demo accounts.
 - **CI** — GitHub Actions runs typecheck, lint, tests, and build on every push/PR.
 
-Still recommended before shipping a real product: password reset + email
-verification flows, an invite flow, a stronger password policy (breach check),
-multi-tenancy (an `Organization` model with per-org roles) if you need tenant
-isolation, and any OAuth/SAML providers your product requires.
+Still recommended before shipping a real product: email verification and invite
+flows, a breach check on passwords, multi-tenancy (an `Organization` model with
+per-org roles) if you need tenant isolation, and any OAuth/SAML providers your
+product requires.
