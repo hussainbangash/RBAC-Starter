@@ -187,6 +187,8 @@ Built into the template:
 - **Seed guard** — `prisma/seed.ts` refuses to run against `NODE_ENV=production`
   unless `ALLOW_PROD_SEED=1`, since it wipes tables and creates demo accounts.
 - **CI** — GitHub Actions runs typecheck, lint, tests, and build on every push/PR.
+- **Automated migrations** — every deploy runs `prisma migrate deploy` before serving
+  (see `vercel.json`), so the live schema can't drift out of sync with the code.
 
 Still recommended before shipping a real product: email verification and invite
 flows, a breach check on passwords, multi-tenancy (an `Organization` model with
