@@ -6,7 +6,7 @@
 A reusable Next.js SaaS template with credentials authentication, PostgreSQL,
 Prisma, and server-side role-based access control.
 
-> **🔗 Live demo:** https://rbacore.vercel.app — sign in with
+> **🔗 Live demo:** https://rbacore.vercel.app - sign in with
 > `admin@demo.com` / `password123` (or the Manager / User demo buttons) to try the
 > role-based dashboard. Running on Vercel + Neon.
 
@@ -53,7 +53,7 @@ Recorded against a live PostgreSQL database.
 ### Live role revocation (the headline)
 
 A signed-in Manager is demoted to USER *directly in the database* and loses access on the
-very next request — no re-login required.
+very next request - no re-login required.
 
 ![Live role revocation](docs/demos/03-live-role-revocation.gif)
 
@@ -132,7 +132,7 @@ npm run seed         # Seed demo users and data
 
 ## Architecture
 
-Every request flows through the same guard path — and every protected request re-reads the
+Every request flows through the same guard path - and every protected request re-reads the
 user from the database, so deletions and role changes take effect immediately:
 
 ```mermaid
@@ -193,29 +193,29 @@ create users, and then build feature pages behind `requireUser()` or
 
 Built into the template:
 
-- **Server-side enforcement** — every protected page and mutation calls
+- **Server-side enforcement** - every protected page and mutation calls
   `requireUser()` / `requireRole()`; UI filtering is only cosmetic.
-- **Live role/deletion checks** — `requireUser()` re-reads the user from the
+- **Live role/deletion checks** - `requireUser()` re-reads the user from the
   database on every request, and the JWT callback refreshes the role, so role
   changes and account deletions take effect immediately instead of when the
   token expires. Sessions also cap at 24h.
-- **Login rate limiting** — `src/lib/rate-limit.ts` throttles sign-in attempts
+- **Login rate limiting** - `src/lib/rate-limit.ts` throttles sign-in attempts
   per IP + email (in-memory; swap for Upstash Redis for multi-instance).
-- **User-enumeration mitigation** — sign-in runs a constant-time bcrypt compare
+- **User-enumeration mitigation** - sign-in runs a constant-time bcrypt compare
   whether or not the email exists.
 - **bcrypt cost 12** for password hashing.
-- **Password reset** — token flow (`/forgot-password` → `/reset-password`) with
+- **Password reset** - token flow (`/forgot-password` → `/reset-password`) with
   **hashed, single-use, 30-minute** tokens, anti-enumeration, rate limiting, and
   **session invalidation** (a reset logs out existing sessions via a
   `passwordChangedAt` check). Sends via **Resend** if `RESEND_API_KEY` is set,
   otherwise logs the link to the server console.
-- **Security headers + CSP** — HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
+- **Security headers + CSP** - HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
   `Referrer-Policy`, `Permissions-Policy` in `next.config.ts`, plus a per-request
   **nonce Content-Security-Policy** in `src/middleware.ts`.
-- **Seed guard** — `prisma/seed.ts` refuses to run against `NODE_ENV=production`
+- **Seed guard** - `prisma/seed.ts` refuses to run against `NODE_ENV=production`
   unless `ALLOW_PROD_SEED=1`, since it wipes tables and creates demo accounts.
-- **CI** — GitHub Actions runs typecheck, lint, tests, and build on every push/PR.
-- **Automated migrations** — every deploy runs `prisma migrate deploy` before serving
+- **CI** - GitHub Actions runs typecheck, lint, tests, and build on every push/PR.
+- **Automated migrations** - every deploy runs `prisma migrate deploy` before serving
   (see `vercel.json`), so the live schema can't drift out of sync with the code.
 
 Still recommended before shipping a real product: email verification and invite
